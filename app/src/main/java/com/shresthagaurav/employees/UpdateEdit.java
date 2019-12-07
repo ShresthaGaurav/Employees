@@ -1,0 +1,92 @@
+package com.shresthagaurav.employees;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.shresthagaurav.employees.database.DBHelper;
+import com.shresthagaurav.employees.model.EmployeeS;
+
+public class UpdateEdit extends AppCompatActivity {
+    Button btn_search, btn_edit;
+    EditText et_name, et_salary, et_age, et_search;
+    DBHelper dbh = new DBHelper(this);
+    String name;
+    int age, salary;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_update_edit);
+        btn_search = findViewById(R.id.btn_se_update);
+        btn_edit = findViewById(R.id.btn_edit);
+        et_search = findViewById(R.id.txtsearch);
+        et_name = findViewById(R.id.up_name);
+        et_age = findViewById(R.id.up_age);
+        et_salary = findViewById(R.id.up_salary);
+        btn_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor cursor = dbh.searchEmployess(Integer.parseInt(et_search.getText().toString()));
+                if (cursor.getCount() == 0) {
+                    // show message
+                    Toast.makeText(UpdateEdit.this, "No found", Toast.LENGTH_SHORT).show();
+
+                }
+                while (cursor.moveToNext()) {
+                    name = cursor.getString(1);
+                    age = cursor.getInt(3);
+                    salary = cursor.getInt(2);
+
+                }
+                et_name.setText(name);
+                et_age.setText(String.valueOf(age));
+                et_salary.setText(String.valueOf(salary));
+            }
+        });
+        btn_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(et_name.getText().toString())) {
+                    if (!TextUtils.isEmpty(et_salary.getText().toString())) {
+                        if (!TextUtils.isEmpty(et_age.getText().toString())) {
+                            String name = et_name.getText().toString();
+                            int age = Integer.parseInt(et_age.getText().toString());
+                            int salary = Integer.parseInt(et_salary.getText().toString());
+                            EmployeeS es = new EmployeeS();
+                            es.setId(Integer.parseInt(et_search.getText().toString()));
+                            es.setAge(age);
+                            es.setSalary(salary);
+                            es.setName(name);
+                            if (dbh.Update(es)) {
+                                et_name.setText("");
+                                et_salary.setText("");
+                                et_age.setText("");
+                                Toast msg = Toast.makeText(UpdateEdit.this, "update success.", Toast.LENGTH_SHORT);
+                                msg.show();
+                            } else {
+                                Toast msg = Toast.makeText(UpdateEdit.this, "Error Update! Please try again later.", Toast.LENGTH_SHORT);
+                                msg.show();
+                            }
+
+                        } else {
+                            et_age.setError("enter age");
+                        }
+
+                    } else {
+                        et_salary.setError("enter salary");
+                    }
+                } else {
+                    et_name.setError("enter name");
+                }
+            }
+        });
+    }
+
+}
