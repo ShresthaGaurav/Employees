@@ -85,4 +85,16 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+    public boolean Delete(int id) {
+        db = this.getWritableDatabase();
+        String query = "Delete from User where id ='" +id+"';";
+        try {
+            Log.d("error", query);
+            db.execSQL(query);
+            return true;
+        } catch (Exception e) {
+            Log.d("error", e.toString());
+            return false;
+        }
+    }
 }
