@@ -14,7 +14,6 @@ import com.shresthagaurav.employees.adapter.AdapterRecycleView;
 import com.shresthagaurav.employees.api.EmployeeAPI;
 import com.shresthagaurav.employees.model.Employee;
 
-import org.w3c.dom.ls.LSException;
 
 import java.util.List;
 
