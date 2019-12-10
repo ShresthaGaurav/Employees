@@ -11,15 +11,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shresthagaurav.employees.R;
-import com.shresthagaurav.employees.model.EmployeeS;
+import com.shresthagaurav.employees.model.Employee;
 
 import java.util.List;
 
 public class AdapterRecycleView extends RecyclerView.Adapter<AdapterRecycleView.ContactsViewHolder > {
     Context context;
-    List<EmployeeS> show_employees;
+    List<Employee> show_employees;
 
-    public AdapterRecycleView(Context context, List<EmployeeS> show_employees) {
+    public AdapterRecycleView(Context context, List<Employee> show_employees) {
         this.context = context;
         this.show_employees = show_employees;
     }
@@ -34,11 +34,11 @@ public class AdapterRecycleView extends RecyclerView.Adapter<AdapterRecycleView.
     @Override
     public void onBindViewHolder(@NonNull AdapterRecycleView.ContactsViewHolder holder, int position) {
 
-        final EmployeeS se = show_employees.get(position);
+        final Employee se = show_employees.get(position);
         holder.txtid.append(String.valueOf(se.getId()));
-        holder.txtname.append(se.getName());
-        holder.txtsalary.append(String.valueOf(se.getSalary()));
-        holder.txtage.append(String.valueOf(se.getAge()));
+        holder.txtname.append(se.getEmployee_name());
+        holder.txtsalary.append(String.valueOf(se.getEmployee_salary()));
+        holder.txtage.append(String.valueOf(se.getEmployee_age()));
 
     }
 

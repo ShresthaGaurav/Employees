@@ -1,54 +1,67 @@
 package com.shresthagaurav.employees;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.database.Cursor;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.shresthagaurav.employees.adapter.AdapterRecycleView;
-import com.shresthagaurav.employees.database.DBHelper;
-import com.shresthagaurav.employees.model.EmployeeS;
+import com.shresthagaurav.employees.api.EmployeeAPI;
+import com.shresthagaurav.employees.model.Employee;
 
-import java.util.ArrayList;
+import org.w3c.dom.ls.LSException;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ShowEmployees extends AppCompatActivity {
     RecyclerView recyclerView;
-    DBHelper dbh = new DBHelper(this);
-    List<EmployeeS> employeeSList = new ArrayList<>();
+    private static String base_url = "http://dummy.restapiexample.com/api/v1/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_employees);
         recyclerView = findViewById(R.id.ReV);
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(base_url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        EmployeeAPI employeeAPI = retrofit.create(EmployeeAPI.class);
+        final Call<List<Employee>> listCall = employeeAPI.getallEmployee();
+        listCall.enqueue(new Callback<List<Employee>>() {
+            @Override
+            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(ShowEmployees.this, "error"+response.code(), Toast.LENGTH_SHORT).show();
+                    Log.d("error","error" +response.code() );
+                return;
+                }
+                List<Employee>listemp=response.body();
+                AdapterRecycleView adapterRecycleView = new AdapterRecycleView(ShowEmployees.this,listemp);
+                recyclerView.setAdapter(adapterRecycleView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(ShowEmployees.this));
+                
+            }
 
-        Cursor cursor = dbh.GetEmployess();
-        if (cursor.getCount() == 0) {
-            // show message
-            Toast.makeText(this, "No data", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            @Override
+            public void onFailure(Call<List<Employee>> call, Throwable t) {
+                Toast.makeText(ShowEmployees.this, "error"+t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("error","error   "+t.getLocalizedMessage() );
 
-
-        while (cursor.moveToNext()) {
-            employeeSList.add(new EmployeeS(cursor.getInt(0), cursor.getString(1),
-                    cursor.getInt(2), cursor.getInt(3)));
-         
-        }
-
-        AdapterRecycleView adapterRecycleView = new AdapterRecycleView(this, employeeSList);
-        recyclerView.setAdapter(adapterRecycleView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+            }
+        });
     }
-
-
 
 
 }
