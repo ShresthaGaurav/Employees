@@ -13,8 +13,8 @@
     android:layout_height="wrap_content"
     android:queryHint="Enter id to search"
     />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RVunique"
+    <TextView
+        android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>
